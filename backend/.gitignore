@@ -1,3 +1,15 @@
+# Python virtual environments
 .venv
+
+# Environment variables
 .env
+
+# macOS system files
 .DS_Store
+
+# Python bytecode files
+__pycache__/
+*.py[cod]
+
+# Stockfish tar file
+stockfish-macos-m1-apple-silicon.tar
