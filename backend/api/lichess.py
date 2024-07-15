@@ -1,11 +1,14 @@
 import httpx
 import json
+import os
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from .stockfish_analyzer import analyze_game
 from .gpt_explainer import generate_explanation
 
 router = APIRouter()
+
+LICHESS_AUTHORIZATION_TOKEN = os.getenv('LICHESS_AUTHORIZATION_TOKEN')
 
 class AnalyzeRequest(BaseModel):
     username: str
@@ -14,7 +17,10 @@ class AnalyzeRequest(BaseModel):
 @router.get("/api/lichess/{username}")
 async def get_lichess_games(username: str):
     url = f"https://lichess.org/api/games/user/{username}"
-    headers = {"Accept": "application/x-ndjson"}
+    headers = {
+        "Authorization": f'Bearer {LICHESS_AUTHORIZATION_TOKEN}',
+        "Accept": "application/x-ndjson"
+    }
     params = {"pgnInJson": "true"}
 
     async with httpx.AsyncClient() as client:
