@@ -23,7 +23,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ fen, lastMove, width = 400, hei
         config={{
           fen: fen,
           orientation: orientation,
-          check: true,
+          check: false,
           movable: {
             free: false,
             color: 'both',
@@ -31,7 +31,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ fen, lastMove, width = 400, hei
           lastMove: lastMove,
           highlight: {
             lastMove: true,
-            check: true,
+            check: false,
           },
           selectable: {
             enabled: false
