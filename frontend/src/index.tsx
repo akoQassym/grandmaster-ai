@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ThemeProvider, createGlobalStyle } from 'styled-components';
+import { Analytics } from "@vercel/analytics/react"
 import { theme } from './theme';
 import './index.css';
 import App from './App';
@@ -27,6 +28,7 @@ root.render(
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <App />
+      <Analytics />
     </ThemeProvider>
   </React.StrictMode>
 );
