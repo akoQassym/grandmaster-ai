@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 interface ChessBoardProps {
   fen: string;
-  lastMove: Key[];
+  lastMove?: Key[] | undefined;
   width: number;
   height: number;
   orientation: "white" | "black";
