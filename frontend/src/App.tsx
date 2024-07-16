@@ -1,44 +1,28 @@
-import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
 import './App.css';
 
 import { GameList, GameDetails } from './components';
-import { Game } from './types';
+import { GameContextProvider } from './GameContext';
 
 const App: React.FC = () => {
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-
-  useEffect(() => {
-    console.log("selected:", selectedGame);
-  }, [selectedGame])
-
-  const selectGame = (game: Game) => {
-    setSelectedGame(game);
-  }
-
   return (
-    <AppWrapper>
-      <ContentWrapper>
-        <H1>Grandmaster AI</H1>
-        <H3>Your ultimate chess coach</H3>
-        {selectedGame ? (
-          <GameDetails
-            id = {selectedGame.id}
-            date = {selectedGame.date}
-            userId = {selectedGame.userId}
-            opponentId = {selectedGame.opponentId}
-            opponentName = {selectedGame.opponentName}
-            opponentRating = {selectedGame.opponentRating}
-            color = {selectedGame.color}
-            status = {selectedGame.status}
-            winner = {selectedGame.winner}
-            pgn = {selectedGame.pgn}
-          />
-        ) : (
-          <GameList onSelectGame={(game: Game) => selectGame(game)} />
-        )}
-      </ContentWrapper>
-    </AppWrapper>
+    <GameContextProvider>
+      <Router>
+        <AppWrapper>
+          <ContentWrapper>
+            <H1>Grandmaster AI</H1>
+            <H2>Your ultimate chess coach</H2>
+            <p>I am actively looking for feedback. Do not hesitate to DM me on Insta: <a style={{ color: "white" }} href='https://www.instagram.com/ako_q/'>@ako_q</a></p>
+            <hr style={{ borderColor: '#202127' }}/>
+            <Routes>
+              <Route path="/" element={<GameList />} />
+              <Route path="/game/:gameId" element={<GameDetails />} />
+            </Routes>
+          </ContentWrapper>
+        </AppWrapper>
+      </Router>
+    </GameContextProvider>
   );
 };
 
@@ -59,13 +43,21 @@ const ContentWrapper = styled.div`
     max-width: 1000px;
     margin: 0 auto;
   }
+
+  @media (min-width: 530px) and (max-width: 999px) {
+    max-width: 530px;
+    margin: 0 auto;
+  }
 `
 
 const H1 = styled.h1`
   font-weight: ${({ theme }) => theme.fontWeightUltrabold};
   color: ${({ theme }) => theme.highlightColor};
+  margin-bottom: 10px;
 `
 
-const H3 = styled.h3`
+const H2 = styled.h2`
   font-weight: ${({ theme }) => theme.fontWeightBold};
+  margin-top: 5px;
+  margin-bottom: 5px;
 `
