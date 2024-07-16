@@ -11,7 +11,8 @@ export const theme = {
   classificationColors: {
     brilliant: "#ebf6fc", 
     excellent: "#006064", 
-    good: "#2e7d32",      
+    good: "#2e7d32",
+    neutral: "#e5e5e6",   
     inaccuracy: "#ebc10c",
     mistake: "#f57c00",   
     blunder: "#b71c1c",
@@ -20,7 +21,8 @@ export const theme = {
   classificationBgColors: {
     brilliant: "#39ace7", 
     excellent: "#e0ffff", 
-    good: "#c8e6c9",      
+    good: "#c8e6c9", 
+    neutral: "#1b1b1f",     
     inaccuracy: "#FEFAE6",
     mistake: "#ffcc80",   
     blunder: "#ef9a9a",
