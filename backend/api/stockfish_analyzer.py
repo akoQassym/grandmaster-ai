@@ -3,9 +3,17 @@ import chess.pgn
 from stockfish import Stockfish
 from fastapi import HTTPException
 from io import StringIO
+import math
 
 # Set the path to your Stockfish binary
 STOCKFISH_PATH = "/usr/games/stockfish"
+
+def adjust_thresholds(evaluation_before, base_threshold):
+    """
+    Adjust the thresholds using an exponential function to model the non-linear relationship.
+    """
+    adjustment_factor = math.exp(evaluation_before / 10)  # Exponential adjustment factor
+    return base_threshold * adjustment_factor
 
 def classify_move(evaluation_before, evaluation_after, user_color, user_move, best_move):
     eval_diff = evaluation_after - evaluation_before
@@ -16,26 +24,38 @@ def classify_move(evaluation_before, evaluation_after, user_color, user_move, be
     if user_move != best_move['Move']:
         if best_move['Mate'] is not None and best_move['Mate'] > 0:
             return "Missed Win"
+        
+    brilliant_threshold = adjust_thresholds(evaluation_before, 3)
+    excellent_threshold = adjust_thresholds(evaluation_before, 1)
+    good_threshold = adjust_thresholds(evaluation_before, 0)
+    neutral_threshold = adjust_thresholds(evaluation_before, -0.25)
+    inaccuracy_threshold = adjust_thresholds(evaluation_before, -0.65)
+    mistake_threshold = adjust_thresholds(evaluation_before, -1)
     
     # Flip the evaluation difference if the user is black
     if user_color == chess.BLACK:
         eval_diff = -eval_diff
 
-    if eval_diff >= 300:
+    if eval_diff >= brilliant_threshold:
         return "Brilliant"
-    elif 100 <= eval_diff < 300:
+    elif eval_diff >= excellent_threshold:
         return "Excellent"
-    elif 0 <= eval_diff < 100:
+    elif eval_diff >= good_threshold:
         return "Good"
-    elif -50 < eval_diff < 0:
+    elif eval_diff >= neutral_threshold:
+        return "Neutral"
+    elif eval_diff >= inaccuracy_threshold:
         return "Inaccuracy"
-    elif -300 < eval_diff <= -50:
+    elif eval_diff >= mistake_threshold:
         return "Mistake"
-    elif eval_diff <= -300:
+    else:
         return "Blunder"
+
 
 def analyze_game(username: str, pgn: str):
     stockfish = Stockfish(STOCKFISH_PATH)
+    stockfish.set_depth(10)
+    stockfish.set_elo_rating(2600)
     
     # Parse the PGN string into a game object
     pgn_io = StringIO(pgn)
@@ -62,14 +82,14 @@ def analyze_game(username: str, pgn: str):
         if board.turn == user_color:
             fen_before = board.fen()
             stockfish.set_fen_position(fen_before)
-            evaluation_before = stockfish.get_evaluation()["value"]
+            evaluation_before = (stockfish.get_evaluation()["value"]) / 100
             pv_before = stockfish.get_top_moves(3)
+            best_move = pv_before[0]["Move"]
 
             board.push(move)
             fen_after = board.fen()
             stockfish.set_fen_position(fen_after)
-            evaluation_after = stockfish.get_evaluation()["value"]
-            best_move = stockfish.get_best_move()
+            evaluation_after = (stockfish.get_evaluation()["value"]) / 100
             pv_after = stockfish.get_top_moves(3)
 
             user_move_uci = move.uci()
