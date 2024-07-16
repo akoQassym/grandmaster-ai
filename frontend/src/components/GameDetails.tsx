@@ -28,7 +28,7 @@ interface PV {
 interface Move {
   uci_move: string;
   best_move: string;
-  classification: "Brilliant" | "Excellent" | "Good" | "Inaccuracy" | "Mistake" | "Blunder" | "Missed Win";
+  classification: "Brilliant" | "Excellent" | "Good" | "Inaccuracy" | "Mistake" | "Blunder" | "Missed Win" | "Neutral";
   evaluation_before: number;
   evaluation_after: number;
   fen_before: string;
@@ -49,6 +49,10 @@ const classificationToColorMatcher: Record<Move['classification'], {color: strin
   "Good": {
     color: theme.classificationColors.good,
     bgColor: theme.classificationBgColors.good
+  },
+  "Neutral": {
+    color: theme.classificationColors.neutral,
+    bgColor: theme.classificationBgColors.neutral
   },
   "Inaccuracy": {
     color: theme.classificationColors.inaccuracy,
@@ -136,10 +140,9 @@ const GameDetails: React.FC<GameDetailsProps> = ({
         </MoveListContainer>
         {selectedMove && (
           <div>
-            <MoveLabel>{selectedMove.uci_move}</MoveLabel>
-            <MoveLabel>{selectedMove.evaluation_before} -{'>'} {selectedMove.evaluation_after}</MoveLabel>
-            <ClassificationLabel $classification={selectedMove.classification}>{selectedMove.classification}</ClassificationLabel>
-            <MoveLabel>{selectedMove.best_move}</MoveLabel>
+            <MoveLabel>Your move: {selectedMove.uci_move}</MoveLabel>
+            <ClassificationLabel $classification={selectedMove.classification}>{selectedMove.classification} ({(selectedMove.evaluation_after - selectedMove.evaluation_before).toFixed(2)})</ClassificationLabel>
+            <MoveLabel>Best move: {selectedMove.best_move}</MoveLabel>
             <Button mode="secondary" onClick={() => handleExplainMove(selectedMove)}>Explain</Button>
             {explanations[selectedMove.uci_move] && <p>{explanations[selectedMove.uci_move]}</p>}
           </div>
