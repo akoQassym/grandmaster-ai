@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
+
 import Button from './Button';
+
 import { Game } from '../types';
+import { useGameContext } from '../GameContext';
 
-interface GameListProps {
-  onSelectGame: (game: Game) => void;
-}
+const GameList: React.FC = () => {
+  const navigate = useNavigate();
+  const { games, setGames } = useGameContext();
 
-const GameList: React.FC<GameListProps> = ({ onSelectGame }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [lichessId, setLichessId] = useState('');
   const [groupedGames, setGroupedGames] = useState<{ [key: string]: Game[] }>({});
@@ -19,10 +22,8 @@ const GameList: React.FC<GameListProps> = ({ onSelectGame }) => {
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/lichess/${lichessId}`);
       const games = response.data.map((game: any) => {
         const isUserWhite = game.players.white.user?.id === lichessId;
-        const opponent = isUserWhite
-          ? game.players.black
-          : game.players.white;
-  
+        const opponent = isUserWhite ? game.players.black : game.players.white;
+
         return {
           id: game.id,
           date: new Date(game.createdAt).toLocaleString(),
@@ -36,6 +37,7 @@ const GameList: React.FC<GameListProps> = ({ onSelectGame }) => {
           pgn: game.pgn,
         };
       });
+      setGames(games);
       setGroupedGames(groupGamesByDate(games));
     } catch (error) {
       console.error("Error fetching games:", error);
@@ -60,6 +62,16 @@ const GameList: React.FC<GameListProps> = ({ onSelectGame }) => {
     }, {} as { [key: string]: Game[] });
   };
 
+  const handleSelectGame = (game: Game) => {
+    navigate(`/game/${game.id}`, { state: { game } });
+  };
+
+  useEffect(() => {
+    if (games.length > 0) {
+      setGroupedGames(groupGamesByDate(games));
+    }
+  }, [games]);
+
   return (
     <div>
       <input
@@ -82,7 +94,7 @@ const GameList: React.FC<GameListProps> = ({ onSelectGame }) => {
                     <GameStatus $won={game.color === game.winner}>{game.color === game.winner ? 'Win' : 'Lose'}</GameStatus>
                     <p>You ({game.color}) vs {game.opponentName} ({game.opponentRating})</p>
                     <p>Game status: {game.status} </p>
-                    <Button mode='secondary' onClick={() => onSelectGame(game)}>Analyze</Button>
+                    <Button mode='secondary' onClick={() => handleSelectGame(game)}>Analyze</Button>
                   </GameContainer>
                 ))}
               </GameListWrapper>
