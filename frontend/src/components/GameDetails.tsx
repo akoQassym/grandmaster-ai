@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 import ChessBoard from './ChessBoard';
 import { Key } from "chessground/src/types";
 import styled from 'styled-components';
@@ -112,47 +113,60 @@ const GameDetails: React.FC<GameDetailsProps> = ({
   if (gameData.length === 0) return <div>Loading...</div>;
 
   return (
-    <FlexWrapper>
-      <ChessBoardWrapper>
-        {selectedMove && 
-          <ChessBoard 
-            width={500} 
-            height={500} 
-            fen={selectedMove.fen_after} 
-            lastMove={uciToSquares(selectedMove.uci_move) as Key[]}
-            orientation={color}
-          />
-        }
-      </ChessBoardWrapper>
-      <div>
-        <MoveListContainer>
-          {gameData.map((move: Move, index: number) => (
-            <MoveContainer 
-              $classification={move.classification} 
-              $selected={(selectedMove && move === selectedMove) ? true : false}
-              onClick={() => setSelectedMove(move)}
-              key={index}
-            >
-              <MoveIndex>{index + 1}.</MoveIndex>
-              <span>{move.uci_move}</span>
-            </MoveContainer>
-          ))}
-        </MoveListContainer>
-        {selectedMove && (
-          <div>
-            <MoveLabel>Your move: {selectedMove.uci_move}</MoveLabel>
-            <ClassificationLabel $classification={selectedMove.classification}>{selectedMove.classification} ({(selectedMove.evaluation_after - selectedMove.evaluation_before).toFixed(2)})</ClassificationLabel>
-            <MoveLabel>Best move: {selectedMove.best_move}</MoveLabel>
-            <Button mode="secondary" onClick={() => handleExplainMove(selectedMove)}>Explain</Button>
-            {explanations[selectedMove.uci_move] && <p>{explanations[selectedMove.uci_move]}</p>}
-          </div>
-        )}
-      </div>
-    </FlexWrapper>
+    <GameDetailsWrapper>
+      <FlexWrapper>
+        <ChessBoardWrapper>
+          {selectedMove && 
+            <ChessBoard 
+              width={500} 
+              height={500} 
+              fen={selectedMove.fen_after} 
+              lastMove={uciToSquares(selectedMove.uci_move) as Key[]}
+              orientation={color}
+            />
+          }
+        </ChessBoardWrapper>
+        <div>
+          <MoveListContainer>
+            {gameData.map((move: Move, index: number) => (
+              <MoveContainer 
+                $classification={move.classification} 
+                $selected={(selectedMove && move === selectedMove) ? true : false}
+                onClick={() => setSelectedMove(move)}
+                key={index}
+              >
+                <MoveIndex>{index + 1}.</MoveIndex>
+                <span>{move.uci_move}</span>
+              </MoveContainer>
+            ))}
+          </MoveListContainer>
+          {selectedMove && (
+            <div>
+              <MoveLabel>Your move: {selectedMove.uci_move}</MoveLabel>
+              <ClassificationLabel $classification={selectedMove.classification}>{selectedMove.classification} ({(selectedMove.evaluation_after - selectedMove.evaluation_before).toFixed(2)})</ClassificationLabel>
+              <MoveLabel>Best move: {selectedMove.best_move}</MoveLabel>
+              <Button mode="secondary" onClick={() => handleExplainMove(selectedMove)}>Explain</Button>
+            </div>
+          )}
+        </div>
+      </FlexWrapper>
+      {selectedMove && explanations[selectedMove.uci_move] && (
+        <div>
+          <h2>A note from your teacher:</h2>
+          <h4>Move: {selectedMove.uci_move} ({selectedMove.classification})</h4>
+          <ReactMarkdown>{explanations[selectedMove.uci_move]}</ReactMarkdown>
+        </div>
+      )}
+    </GameDetailsWrapper>
   );
 };
 
 export default GameDetails;
+
+const GameDetailsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`
 
 const FlexWrapper = styled.div`
   display: flex;
