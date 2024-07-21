@@ -1,7 +1,7 @@
+import httpx
+import os
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-import requests
-import os
 
 router = APIRouter()
 
@@ -23,7 +23,11 @@ async def send_details(user_details: UserDetails):
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message
     }
-    response = requests.post(url, json=payload)
-    if not response.ok:
-        raise HTTPException(status_code=500, detail="Failed to send message to Telegram")
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, json=payload)
+        
+        if response.status_code != 200:
+            raise HTTPException(status_code=500, detail="Failed to send message to Telegram")
+    
     return {"message": "Details sent to Telegram"}
