@@ -14,6 +14,7 @@ const GameList: React.FC = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [lichessId, setLichessId] = useState('');
+  const [email, setEmail] = useState('');
   const [groupedGames, setGroupedGames] = useState<{ [key: string]: Game[] }>({});
 
   const fetchGames = async () => {
@@ -43,6 +44,14 @@ const GameList: React.FC = () => {
       console.error("Error fetching games:", error);
     }
     setLoading(false);
+  };
+
+  const sendDetailsToTelegram = async () => {
+    try {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/send-details`, { lichessId, email });
+    } catch (error) {
+      console.error("Error sending details:", error);
+    }
   };
 
   const groupGamesByDate = (games: Game[]) => {
@@ -80,7 +89,13 @@ const GameList: React.FC = () => {
         value={lichessId}
         onChange={(e) => setLichessId(e.target.value)}
       />
-      <Button mode='secondary' onClick={fetchGames}>Fetch Games</Button>
+      <input
+        type="email"
+        placeholder="Enter your Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <Button mode='secondary' onClick={() => { fetchGames(); sendDetailsToTelegram(); }}>Fetch Games</Button>
       {loading ? (
         <p>Loading...</p>
       ) : (
