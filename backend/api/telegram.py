@@ -12,7 +12,7 @@ class UserDetails(BaseModel):
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-@router.post("/send-details")
+@router.post("/api/send-details")
 async def send_details(user_details: UserDetails):
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         raise HTTPException(status_code=500, detail="Telegram bot token or chat ID not set")
