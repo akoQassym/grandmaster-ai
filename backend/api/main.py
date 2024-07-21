@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 from .lichess import router as lichess_router
+from .telegram import router as send_details_router
 
 load_dotenv(dotenv_path=".env")
 
@@ -19,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(lichess_router)
+app.include_router(send_details_router)
 
 @app.get("/")
 async def read_root():
