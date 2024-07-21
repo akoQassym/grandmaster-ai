@@ -39,4 +39,4 @@ jobs:
 
       - name: Update ECS service
         run: |
-          aws ecs update-service --cluster grandmasterai-cluster --service grandmasterai-service --force-new-deployment
+          aws ecs update-service --cluster grandmasterai-cluster --service grandmasterai-service-v1 --force-new-deployment
