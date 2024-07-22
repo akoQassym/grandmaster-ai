@@ -15,6 +15,7 @@ const App: React.FC = () => {
             <H2>Your ultimate chess coach</H2>
             <p>I am actively looking for feedback. Do not hesitate to DM me on Insta: <a style={{ color: "white" }} href='https://www.instagram.com/ako_q/'>@ako_q</a></p>
             <hr style={{ borderColor: '#202127' }}/>
+            <p>UPD: Lichess Blocked me due to high volume of requests in parallel. While I am resolving the issue, you can leave your Lichess ID and Email, and I will get back to you immediately when the problem is solved ={')'}.</p>
             <Routes>
               <Route path="/" element={<GameList />} />
               <Route path="/game/:gameId" element={<GameDetails />} />
