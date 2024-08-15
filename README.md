@@ -8,7 +8,7 @@ This is a full-stack chess coaching tool that analyzes games using the Stockfish
 
 ### b. Screenshot Banner
 
-![Game Analysis and Explanation](./assets/banner.png)
+![Game Analysis and Explanation](./screenshots/banner.png)
 
 *(Insert a screenshot showing the chess analysis by Stockfish and the AI-generated explanation)*
 
